@@ -25,7 +25,7 @@ jobs:
       - name: build with maven
         run: mvn compile 
 
-  Trivy-security-scan:
+  Trivy-fs-scan:
     runs-on: Agent-1
     needs: compile
     steps:
@@ -43,9 +43,9 @@ jobs:
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
 
-  Gtleaks-Scan:
+  GitLeaks-Scan:
     runs-on: Agent-1
-    needs: Trivy-security-scan
+    needs: Trivy-fs-scan
     steps:
       - name: checkout code
         uses: actions/checkout@v5
@@ -54,8 +54,24 @@ jobs:
         run: sudo apt install gitleaks -y
 
       - name: GitLeaks code Scan
-        run: gitleaks detect source . --report-path gitleaks-report.json -f json --redact
-
+        run: gitleaks detect source . -r gitleaks-report.json -f json
+        
+  test:
+    runs-on: Agent-1
+    needs: GitLeaks-Scan
+    steps:
+    - name: checkout code
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Unit Test Cases
+      run: mvn test
       
       
       
