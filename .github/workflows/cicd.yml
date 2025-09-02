@@ -1,26 +1,29 @@
-name: CICD Pipeline 
+name: cicd pipeline
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   compile:
-    runs-on: ubuntu-latest
+    runs-on: Agent-1
 
     steps:
-      - name: checkout the code
-        uses: actions/checkout@v4
+      - name: checkout code
+        uses: actions/checkout@v5
 
-      - name: setup JDK 17
+      - name: set up java 
         uses: actions/setup-java@v4
         with:
+          distributions: 'temurin'
           java-version: '17'
-          distribution: 'temurin'
-          cache: maven
+          cache: 'maven'
+          
 
-      - name: compile
-        run: mvn compile 
-        
+
+  
 
   
