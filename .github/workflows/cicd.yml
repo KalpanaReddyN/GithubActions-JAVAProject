@@ -24,7 +24,7 @@ jobs:
       - name: build with maven
         run: mvn compile 
 
-  security-check:
+  Trivy-security-scan:
     runs-on: Agent-1
     steps:
       - name: checkout code
@@ -35,12 +35,17 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          format: 'table'
+          format: 'json'
+          output: 'trivy-output.json'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
         
-          
+
+ 
+        
+        
+      
 
 
   
