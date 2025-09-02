@@ -1,3 +1,4 @@
+
 name: cicd pipeline
 
 on:
@@ -6,7 +7,7 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
-
+ 
 jobs:
   compile:
     runs-on: Agent-1
@@ -26,6 +27,7 @@ jobs:
 
   Trivy-security-scan:
     runs-on: Agent-1
+    needs: compile
     steps:
       - name: checkout code
         uses: actions/checkout@v5
@@ -40,6 +42,23 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+
+  Gtleaks-Scan:
+    runs-on: Agent-1
+    needs: Trivy-security-scan
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+
+      - name: Gitleaks Installation
+        run: sudo apt install gitleaks -y
+
+      - name: GitLeaks code Scan
+        run: gitleaks select source . -r gitleaks-report.json -f json
+
+      
+      
+      
         
 
  
