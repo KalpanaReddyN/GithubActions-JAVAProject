@@ -70,6 +70,25 @@ jobs:
         with:
           name: GitLeaks scan report
           path: gitleaks-scan.json
+
+  unit-tests:
+    runs-on: Agent-1
+    needs: GitLeaks-Scan
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+
+      - name: install java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: maven
+
+      - name: Run unit test cases
+        run: mvn test  
+      
         
           
           
