@@ -112,7 +112,24 @@ jobs:
           pollingTimeoutSec: 600
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }} 
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+
+  snyk-check:
+    runs-on: Agent-1
+    needs: sonar-qube-analysis
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+
+      - name: Run Synk to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: code test
+          args: --sarif-file-output=snyk.sarif
       
         
           
