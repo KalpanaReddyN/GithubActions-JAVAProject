@@ -43,6 +43,12 @@ jobs:
           format: 'json'
           output: 'trivy-fs-scan.json'
           vuln-type: 'os,library'
+
+      - name: upload trivy scan report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-fs-scan
+          path: trivy-fs-scan.json
           
           
           
