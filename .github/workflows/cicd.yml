@@ -1,5 +1,5 @@
 
-name: cicd pipeline
+name: java-project
 
 on:
   push:
@@ -7,95 +7,29 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
- 
+  schedule: 
+    - cron: "0 5 * * *"
+
 jobs:
   compile:
     runs-on: Agent-1
+
     steps:
       - name: checkout code
         uses: actions/checkout@v5
 
-      - name: set up java 
+      - name: install java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'maven'
+          cache: maven
 
-      - name: build with maven
-        run: mvn compile 
-
-  Trivy-fs-scan:
-    runs-on: Agent-1
-    needs: compile
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v5
-        
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'json'
-          output: 'trivy-output.json'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
-
-  GitLeaks-Scan:
-    runs-on: Agent-1
-    needs: Trivy-fs-scan
-    steps:
-      - name: checkout code
-        uses: actions/checkout@v5
-
-      - name: Gitleaks Installation
-        run: sudo apt install gitleaks -y
-
-      - name: GitLeaks code Scan
-        run: gitleaks detect source . -r gitleaks-report.json -f json
-        
-  Test:
-    runs-on: Agent-1
-    needs: GitLeaks-Scan
-    steps:
-    - name: checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-        
-    - name: Unit Test Cases
-      run: mvn test
-
-  Build:
-    runs-on: Agent-1
-    needs: Test
-    steps:
-    - name: checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-
-    - name: Build Project
-      run: mvn clean package
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with: 
-        name: javaapp-jar
-        path: target/*.jar
+      - name: compile
+        run: mvn compile
       
+    
+  
       
         
 
