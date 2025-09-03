@@ -30,6 +30,7 @@ jobs:
 
   Trivy-fs-scan:
     runs-on: Agent-1
+    needs: compile
 
     steps:
       - name: checkout code
@@ -49,6 +50,27 @@ jobs:
         with:
           name: trivy-fs-scan
           path: trivy-fs-scan.json
+
+  GitLeaks-Scan:
+    runs-on: Agent-1
+    needs: Trivy-fs-scan
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+
+      - name: GitLeaks Installation
+        run: sudo apt install gitleaks -y
+
+      - name: Gitleaks code scan
+        run:  gitleaks detect source . -r gitleaks-report.json -f json  
+
+      - name: upload Gitleaks scan report
+        uses: actions/upload-artifact@v4
+        with:
+          name: GitLeaks scan report
+          path: gitleaks-scan.json
+        
           
           
           
