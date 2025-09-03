@@ -27,6 +27,24 @@ jobs:
 
       - name: compile
         run: mvn compile
+
+  Trivy-fs-scan:
+    runs-on: Agent-1
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+
+      - name: trivy-filesystem-scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL, HIGH'
+          
       
     
   
