@@ -40,7 +40,8 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          format: 'table'
+          format: 'json'
+          output: 'trivy-fs-scan.json'
           exit-code: '1'
           vuln-type: 'os,library'
           
